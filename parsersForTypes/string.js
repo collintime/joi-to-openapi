@@ -34,8 +34,16 @@ const getMaxLength = tests => {
 };
 
 const getPattern = tests => {
+  // string().pattern() will take priority over string().whatever()
   const p = find(tests, { name: "pattern" });
-  return p ? { pattern: p.args.regex.source } : null;
+  if (p) {
+    return { pattern: p.args.regex.source }
+  }
+  const r = find(tests, t => t.regex)
+  if (r) {
+    return { pattern: r.regex.toString() }
+  }
+  return null;
 };
 
 const mkString = (cond, schema) => {
